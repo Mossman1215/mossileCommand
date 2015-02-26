@@ -1,7 +1,7 @@
 package com.fruitsofdoom.MossileCommand;
 
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Pool;
 
 public class Main extends ApplicationAdapter {
 	SpriteBatch batch;
@@ -21,17 +20,25 @@ public class Main extends ApplicationAdapter {
 	ShapeRenderer shapeBatch;
 	Vector2 touch = new Vector2();
 	OrthographicCamera camera;
-	ArrayList<Missile> missileList;
+	LinkedList<Missile> missileList;
 	@Override
 	public void create () {
 		camera = new OrthographicCamera(1280, 720);
 		batch = new SpriteBatch();
 		shapeBatch = new ShapeRenderer();
-		missileList = new ArrayList<Missile>();
+		missileList = new LinkedList<Missile>();
+		img = new Texture("buildings.png");
 	}
 
 	@Override
 	public void render () {
+		for(Missile m: missileList){
+			if(!m.visible){
+				if(!m.exp.visible){
+					missileList.remove(m);
+				}
+			}
+		}
 		camera.update();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -47,6 +54,9 @@ public class Main extends ApplicationAdapter {
 		}
 		shapeBatch.end();
 		batch.begin();
+		for(int i=100; i<1280; i+=320){
+			batch.draw(img, i, 0);
+		}
 		batch.end();
 	}
 }
