@@ -19,8 +19,8 @@ public class Missile {
 		visible = true;
 		this.touch = touch;
 		viewPortWidth = vpWidth;
-		position = new Vector2(viewPortWidth / 2, 100);
-		startPt = new Vector2(viewPortWidth / 2, 100);
+		position = new Vector2(viewPortWidth / 2, 85);
+		startPt = new Vector2(viewPortWidth / 2, 85);
 		speed = new Vector2(100,100);
 		difference = new Vector2(touch.x,touch.y);
 		difference = difference.sub(position);
