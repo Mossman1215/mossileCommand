@@ -16,7 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Main extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture building,missileBuilding;
+	Texture build,missileTurret;
 	ShapeRenderer shapeBatch;
 	Vector2 touch = new Vector2();
 	OrthographicCamera camera;
@@ -24,16 +24,20 @@ public class Main extends ApplicationAdapter {
 	ArrayList<Missile> removeList;
 	int vpHeight = 720;
 	int vpWidth = 1280;
-
+	Building[] buildings;
+	Building missileBuilding;
+	
 	@Override
 	public void create() {
 		camera = new OrthographicCamera(vpWidth, vpHeight);
 		batch = new SpriteBatch();
 		shapeBatch = new ShapeRenderer();
 		missileList = new LinkedList<Missile>();
-		building = new Texture("buildings.png");
-		missileBuilding = new Texture("missilebuilding.png");
+		build = new Texture("buildings.png");
+		missileTurret = new Texture("missilebuilding.png");
 		removeList = new ArrayList<Missile>();
+		missileBuilding = new Building(vpWidth/2-75, 0, Building.typeOfBuild.military, 85, 100, missileTurret);
+		buildings = new Building[4];
 	}
 
 	@Override
@@ -52,6 +56,7 @@ public class Main extends ApplicationAdapter {
 			m.update();
 			m.render(shapeBatch);
 		}
+		missileBuilding.update();
 		for (Missile m : missileList) {
 			if (!m.visible && !m.exp.visible) {
 				removeList.add(m);
@@ -68,7 +73,7 @@ public class Main extends ApplicationAdapter {
 		for (int i = 100; i < vpWidth; i += 320) {
 			batch.draw(building, i, 0, 60, 48);
 		}
-		batch.draw(missileBuilding,vpWidth/2-75,0,100,85);
+		missileBuilding.render(batch);
 		batch.end();
 	}
 }
