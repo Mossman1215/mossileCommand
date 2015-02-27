@@ -60,6 +60,9 @@ public class Main extends ApplicationAdapter {
 		for (Missile r : removeList) {
 			missileList.remove(r);
 		}
+		if(removeList.size()>10){
+			removeList = new ArrayList<Missile>();
+		}
 		shapeBatch.end();
 		batch.begin();
 		for (int i = 100; i < vpWidth; i += 320) {
