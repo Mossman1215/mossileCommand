@@ -36,8 +36,11 @@ public class Main extends ApplicationAdapter {
 		build = new Texture("buildings.png");
 		missileTurret = new Texture("missilebuilding.png");
 		removeList = new ArrayList<Missile>();
-		missileBuilding = new Building(vpWidth/2-75, 0, Building.typeOfBuild.military, 85, 100, missileTurret);
+		missileBuilding = new Building(vpWidth/2-75, 0, Building.typeOfBuild.military, 100, 85, missileTurret);
 		buildings = new Building[4];
+		for(int i =0; i<4;i++){
+			buildings[i] = new Building(i*vpWidth/4+100, 0, Building.typeOfBuild.civilian, 60, 48, build);
+		}
 	}
 
 	@Override
@@ -70,8 +73,8 @@ public class Main extends ApplicationAdapter {
 		}
 		shapeBatch.end();
 		batch.begin();
-		for (int i = 100; i < vpWidth; i += 320) {
-			batch.draw(building, i, 0, 60, 48);
+		for(Building b: buildings){
+			b.render(batch);
 		}
 		missileBuilding.render(batch);
 		batch.end();

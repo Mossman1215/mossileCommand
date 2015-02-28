@@ -17,7 +17,7 @@ public class Building {
 	int height,width;
 	Texture img;
 	Rectangle boundary;
-	public Building(int x, int y, typeOfBuild type,int height,int width, Texture img) {
+	public Building(int x, int y, typeOfBuild type,int width, int height, Texture img) {
 		this.type = type;
 		position = new Vector2(x, y);
 		dir = dir.left;
