@@ -17,10 +17,12 @@ public class Building {
 	int height,width;
 	Texture img;
 	Rectangle boundary;
+	float dirSwitchTime = .5f;
+	float delta = 0;
 	public Building(int x, int y, typeOfBuild type,int width, int height, Texture img) {
 		this.type = type;
 		position = new Vector2(x, y);
-		dir = dir.left;
+		dir = direction.left;
 		this.height = height;
 		this.img = img;
 		this.width = width;
@@ -28,6 +30,15 @@ public class Building {
 	}
 
 	public void update() {
+		delta +=Gdx.graphics.getDeltaTime();
+		if(dirSwitchTime-delta<0){
+			delta = 0;
+			if(dir == direction.left){
+				dir = direction.right;
+			}else{
+				dir= direction.left;
+			}
+		}
 		if(position.y < 0-height){
 			visible = false;
 		}

@@ -12,11 +12,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 public class Main extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture build,missileTurret;
+	Texture build, missileTurret;
 	ShapeRenderer shapeBatch;
 	Vector2 touch = new Vector2();
 	OrthographicCamera camera;
@@ -26,7 +28,7 @@ public class Main extends ApplicationAdapter {
 	int vpWidth = 1280;
 	Building[] buildings;
 	Building missileBuilding;
-	
+
 	@Override
 	public void create() {
 		camera = new OrthographicCamera(vpWidth, vpHeight);
@@ -36,10 +38,12 @@ public class Main extends ApplicationAdapter {
 		build = new Texture("buildings.png");
 		missileTurret = new Texture("missilebuilding.png");
 		removeList = new ArrayList<Missile>();
-		missileBuilding = new Building(vpWidth/2-75, 0, Building.typeOfBuild.military, 100, 85, missileTurret);
+		missileBuilding = new Building(vpWidth / 2 - 75, 0,
+				Building.typeOfBuild.military, 100, 85, missileTurret);
 		buildings = new Building[4];
-		for(int i =0; i<4;i++){
-			buildings[i] = new Building(i*vpWidth/4+100, 0, Building.typeOfBuild.civilian, 60, 48, build);
+		for (int i = 0; i < 4; i++) {
+			buildings[i] = new Building(i * vpWidth / 4 + 100, 0,
+					Building.typeOfBuild.civilian, 60, 48, build);
 		}
 	}
 
@@ -58,22 +62,35 @@ public class Main extends ApplicationAdapter {
 		for (Missile m : missileList) {
 			m.update();
 			m.render(shapeBatch);
-		}
-		missileBuilding.update();
-		for (Missile m : missileList) {
 			if (!m.visible && !m.exp.visible) {
 				removeList.add(m);
 			}
+			for (Building b : buildings) {
+				if (b.boundary.contains(m.position)) {
+					b.damaged = true;
+				}
+				Circle tempcircle = new Circle(b.boundary.x, b.boundary.y,
+						b.boundary.width);
+				if (m.exp != null) {
+					if (m.exp.boundary.contains(tempcircle)) {
+						b.damaged = true;
+					}
+				}
+			}
+		}
+		missileBuilding.update();
+		for (Building b : buildings) {
+			b.update();
 		}
 		for (Missile r : removeList) {
 			missileList.remove(r);
 		}
-		if(removeList.size()>10){
+		if (removeList.size() > 10) {
 			removeList = new ArrayList<Missile>();
 		}
 		shapeBatch.end();
 		batch.begin();
-		for(Building b: buildings){
+		for (Building b : buildings) {
 			b.render(batch);
 		}
 		missileBuilding.render(batch);
