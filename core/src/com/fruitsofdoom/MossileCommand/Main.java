@@ -5,17 +5,14 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 public class Main extends ApplicationAdapter {
 	SpriteBatch batch;
@@ -25,11 +22,16 @@ public class Main extends ApplicationAdapter {
 	OrthographicCamera camera;
 	LinkedList<Missile> missileList;
 	ArrayList<Missile> removeList;
+	LinkedList<ICBM> ICBMList;
+	ArrayList<ICBM> removeIList;
 	int vpHeight = 720;
 	int vpWidth = 1280;
 	Building[] buildings;
 	Building missileBuilding;
-
+	float cooldown = .5f;
+	float currentTime =0;
+	int wave = 0;
+	float ICBMSpeed = 1;
 	@Override
 	public void create() {
 		camera = new OrthographicCamera(vpWidth, vpHeight);
@@ -39,12 +41,17 @@ public class Main extends ApplicationAdapter {
 		build = new Texture("buildings.png");
 		missileTurret = new Texture("missilebuilding.png");
 		removeList = new ArrayList<Missile>();
+		ICBMList = new LinkedList<ICBM>();
+		removeIList = new ArrayList<ICBM>();
 		missileBuilding = new Building(vpWidth / 2 - 75, 0,
 				Building.typeOfBuild.military, 100, 85, missileTurret);
 		buildings = new Building[4];
 		for (int i = 0; i < 4; i++) {
 			buildings[i] = new Building(i * vpWidth / 4 + 100, 0,
 					Building.typeOfBuild.civilian, 60, 48, build);
+		}
+		for(int i=0;i<10;i++){
+			ICBMList.add(new ICBM(ICBMSpeed));
 		}
 	}
 
@@ -55,10 +62,8 @@ public class Main extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		shapeBatch.begin(ShapeType.Line);
-		shapeBatch.setColor(Color.GREEN);
 		if (Gdx.input.isTouched()) {
-			missileList.add(new Missile(new Vector2(Gdx.input.getX(), vpHeight
-					- Gdx.input.getY()), vpWidth));
+			missileList.add(new Missile(new Vector2(Gdx.input.getX(), vpHeight - Gdx.input.getY()), vpWidth));
 		}
 		for (Missile m : missileList) {
 			m.update();
@@ -69,6 +74,8 @@ public class Main extends ApplicationAdapter {
 			for (Building b : buildings) {
 				if (b.boundary.contains(m.position)) {
 					b.damaged = true;
+					m.exp = new Explosion(m.position);
+					m.visible=false;
 				}
 				if (m.exp != null) {
 					if (Intersector.overlaps(m.exp.boundary,b.boundary)) {
@@ -77,6 +84,7 @@ public class Main extends ApplicationAdapter {
 				}
 			}
 		}
+		
 		missileBuilding.update();
 		for (Building b : buildings) {
 			b.update();
@@ -87,11 +95,16 @@ public class Main extends ApplicationAdapter {
 		if (removeList.size() > 10) {
 			removeList = new ArrayList<Missile>();
 		}
+		for (ICBM i: ICBMList){
+			i.update();
+			i.render(shapeBatch);
+		}
 		shapeBatch.end();
 		batch.begin();
 		for (Building b : buildings) {
 			b.render(batch);
 		}
+		
 		missileBuilding.render(batch);
 		batch.end();
 	}
