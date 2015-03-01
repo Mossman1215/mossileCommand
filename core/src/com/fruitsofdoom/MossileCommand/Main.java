@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 
@@ -69,10 +70,8 @@ public class Main extends ApplicationAdapter {
 				if (b.boundary.contains(m.position)) {
 					b.damaged = true;
 				}
-				Circle tempcircle = new Circle(b.boundary.x, b.boundary.y,
-						b.boundary.width);
 				if (m.exp != null) {
-					if (m.exp.boundary.contains(tempcircle)) {
+					if (Intersector.overlaps(m.exp.boundary,b.boundary)) {
 						b.damaged = true;
 					}
 				}
