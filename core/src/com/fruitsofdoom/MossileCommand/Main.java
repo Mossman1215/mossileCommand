@@ -77,14 +77,38 @@ public class Main extends ApplicationAdapter {
 					m.exp = new Explosion(m.position);
 					m.visible=false;
 				}
-				if (m.exp != null) {
+				if (m.exp != null&&m.exp.visible) {
 					if (Intersector.overlaps(m.exp.boundary,b.boundary)) {
 						b.damaged = true;
 					}
 				}
 			}
+			for(ICBM i:ICBMList){
+				if(m.exp!=null&&m.exp.visible){
+					if(m.exp.boundary.contains(i.position)){
+						i.visible=false;
+						i.exp = new Explosion(i.position);
+					}
+				}
+				if(i.exp!=null&&i.exp.visible){
+					if(i.exp.boundary.contains(m.position)){
+						m.visible=false;
+						m.exp = new Explosion(m.position);
+					}
+				}
+			}
 		}
-		
+		for(ICBM i:ICBMList){
+			if(!i.visible&&!i.exp.visible){
+				removeIList.add(i);
+			}
+		}
+		for(ICBM r : removeIList){
+			ICBMList.remove(r);
+		}
+		if(removeIList.size()>10){
+			removeIList= new ArrayList<ICBM>();
+		}
 		missileBuilding.update();
 		for (Building b : buildings) {
 			b.update();

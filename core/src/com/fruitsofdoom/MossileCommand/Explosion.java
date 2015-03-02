@@ -11,11 +11,12 @@ public class Explosion {
 	float maxRadius = 85f; 
 	float currentRadius = .1f;
 	float speed = 20;
-	boolean visible = true;
+	boolean visible;
 	Circle boundary ;
 	public Explosion(Vector2 start){
 		position = new Vector2(start.x,start.y);
 		boundary = new Circle(position, currentRadius);
+		visible=true;
 	}
 	public void update(){
 		currentRadius += speed*Gdx.graphics.getDeltaTime();
