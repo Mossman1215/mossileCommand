@@ -62,7 +62,7 @@ public class Main extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		shapeBatch.begin(ShapeType.Line);
-		if (Gdx.input.isTouched()) {
+		if (Gdx.input.isTouched()&&Gdx.input.justTouched()) {
 			missileList.add(new Missile(new Vector2(Gdx.input.getX(), vpHeight - Gdx.input.getY()), vpWidth));
 		}
 		for (Missile m : missileList) {
