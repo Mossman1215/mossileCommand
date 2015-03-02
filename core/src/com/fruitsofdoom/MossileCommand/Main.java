@@ -122,6 +122,20 @@ public class Main extends ApplicationAdapter {
 		for (ICBM i: ICBMList){
 			i.update();
 			i.render(shapeBatch);
+			for(Building b:buildings){
+				if(i.visible){
+					if(b.boundary.contains(i.position)){
+						b.damaged=true;
+						i.visible=false;
+						i.exp=new Explosion(i.position);
+					}
+				}
+				if(i.exp!=null&&i.exp.visible){
+					if(Intersector.overlaps(i.exp.boundary, b.boundary)){
+						b.damaged=true;
+					}
+				}
+			}
 		}
 		shapeBatch.end();
 		batch.begin();
