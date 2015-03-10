@@ -16,7 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Main extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture build, missileTurret;
+	Texture build, missileTurret,bullet;
 	ShapeRenderer shapeBatch;
 	Vector2 touch = new Vector2();
 	OrthographicCamera camera;
@@ -32,6 +32,10 @@ public class Main extends ApplicationAdapter {
 	float currentTime =0;
 	int wave = 0;
 	float ICBMSpeed = 1;
+	int maxAmmo = 10;
+	int currentAmmo = 10;
+	float regenRate = 10f;
+	float regenTime =0;
 	@Override
 	public void create() {
 		camera = new OrthographicCamera(vpWidth, vpHeight);
@@ -40,6 +44,7 @@ public class Main extends ApplicationAdapter {
 		missileList = new LinkedList<Missile>();
 		build = new Texture("buildings.png");
 		missileTurret = new Texture("missilebuilding.png");
+		bullet = new Texture("bullet.png");
 		removeList = new ArrayList<Missile>();
 		ICBMList = new LinkedList<ICBM>();
 		removeIList = new ArrayList<ICBM>();
@@ -60,10 +65,21 @@ public class Main extends ApplicationAdapter {
 		camera.update();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+		currentTime+=Gdx.graphics.getDeltaTime();
+		regenTime+=Gdx.graphics.getDeltaTime();
 		shapeBatch.begin(ShapeType.Line);
-		if (Gdx.input.isTouched()&&Gdx.input.justTouched()) {
-			missileList.add(new Missile(new Vector2(Gdx.input.getX(), vpHeight - Gdx.input.getY()), vpWidth));
+		if (Gdx.input.isTouched()&&Gdx.input.justTouched()&&!missileBuilding.damaged) {
+			if(currentAmmo>0){
+			if(currentTime>cooldown){
+				missileList.add(new Missile(new Vector2(Gdx.input.getX(), vpHeight - Gdx.input.getY()), vpWidth));
+				currentTime=0;
+				currentAmmo--;
+				}
+			}
+		}
+		if(regenTime>regenRate && currentAmmo<=maxAmmo){
+			currentAmmo++;
+			regenTime=0;
 		}
 		for (Missile m : missileList) {
 			m.update();
@@ -88,6 +104,7 @@ public class Main extends ApplicationAdapter {
 					if(m.exp.boundary.contains(i.position)){
 						i.visible=false;
 						i.exp = new Explosion(i.position);
+						i.speed=new Vector2(0, 0);
 					}
 				}
 				if(i.exp!=null&&i.exp.visible){
@@ -128,13 +145,21 @@ public class Main extends ApplicationAdapter {
 						b.damaged=true;
 						i.visible=false;
 						i.exp=new Explosion(i.position);
+						i.speed=new Vector2(0,0);
 					}
 				}
 				if(i.exp!=null&&i.exp.visible){
 					if(Intersector.overlaps(i.exp.boundary, b.boundary)){
 						b.damaged=true;
 					}
+					if(Intersector.overlaps(i.exp.boundary, missileBuilding.boundary)){
+						missileBuilding.damaged=true;
+					}
 				}
+			}
+			if(missileBuilding.boundary.contains(i.position)){
+				missileBuilding.damaged = true;
+				i.exp=new Explosion(i.position);
 			}
 		}
 		shapeBatch.end();
@@ -142,7 +167,9 @@ public class Main extends ApplicationAdapter {
 		for (Building b : buildings) {
 			b.render(batch);
 		}
-		
+		for(int i = 0; i<currentAmmo;i++){
+			batch.draw(bullet, i*20, 50,10,20);
+		}
 		missileBuilding.render(batch);
 		batch.end();
 	}
