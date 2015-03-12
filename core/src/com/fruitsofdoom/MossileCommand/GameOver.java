@@ -1,13 +1,29 @@
 package com.fruitsofdoom.MossileCommand;
 
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameOver implements Screen {
-
+	BitmapFont font;
+	SpriteBatch batch;
+	int vpWidth;
+	int vpHeight;
+	Game game;
+	public GameOver (int viewWidth,int viewHeight,Game game){
+		batch = new SpriteBatch();
+		font = new BitmapFont();
+		vpWidth = viewWidth;
+		vpHeight = viewHeight;
+		font.scale(2f);
+		this.game = game;
+	}
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -15,6 +31,14 @@ public class GameOver implements Screen {
 		// TODO Auto-generated method stub
 		//render a text field saying game over
 		//if tapped game restarts at main menu
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		batch.begin();
+		font.draw(batch, "GAME OVER",vpWidth/2-100, vpHeight/2);
+		batch.end();
+		if(Gdx.input.isTouched()&&Gdx.input.justTouched()){
+			game.setScreen(new SinglePlayer(game));
+		}
 	}
 
 	@Override
@@ -44,7 +68,8 @@ public class GameOver implements Screen {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-
+		batch.dispose();
+		font.dispose();
 	}
 
 }
