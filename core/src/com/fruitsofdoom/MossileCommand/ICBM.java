@@ -23,7 +23,7 @@ public class ICBM {
 		startPt = new Vector2(MathUtils.random(1280), 720);
 		position = new Vector2(startPt.x,startPt.y);
 		target = new Vector2(MathUtils.random(1280),0);
-		this.speed = new Vector2(50,50);
+		this.speed = new Vector2(25,25);
 		difference = new Vector2(target.x, target.y);
 		difference = difference.sub(position);
 		difference.nor();

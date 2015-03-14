@@ -32,12 +32,13 @@ public class SinglePlayer implements Screen {
 	float cooldown = .5f;
 	float currentTime =0;
 	int wave = 0;
-	float ICBMSpeed = 1;
+	float difficulty = 1.25f;
 	int maxAmmo = 10;
 	int currentAmmo = 10;
-	float regenRate = 10f;
+	float regenRate = 2f;
 	float regenTime =0;
 	Game game;
+	Spawner missileSpawner;
 	public SinglePlayer(Game game) {
 		camera = new OrthographicCamera(vpWidth, vpHeight);
 		batch = new SpriteBatch();
@@ -56,9 +57,7 @@ public class SinglePlayer implements Screen {
 			buildings[i] = new Building(i * vpWidth / 4 + 100, 0,
 					Building.typeOfBuild.civilian, 60, 48, build);
 		}
-		for(int i=0;i<10;i++){
-			ICBMList.add(new ICBM(ICBMSpeed));
-		}
+		missileSpawner = new Spawner(1.5f, ICBMList, 10);
 		this.game = game;
 	}
 
@@ -69,6 +68,13 @@ public class SinglePlayer implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		currentTime+=Gdx.graphics.getDeltaTime();
 		regenTime+=Gdx.graphics.getDeltaTime();
+		missileSpawner.Update();
+		if(missileSpawner.complete){
+			//score
+			//reset buildings
+			//tell the player wtf is going on
+			missileSpawner= new Spawner(missileSpawner.delay*difficulty, ICBMList, (int)(missileSpawner.maxAmt*difficulty));
+		}
 		shapeBatch.begin(ShapeType.Line);
 		if (Gdx.input.isTouched()&&Gdx.input.justTouched()&&!missileBuilding.damaged) {
 			if(currentAmmo>0){
