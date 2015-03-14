@@ -69,11 +69,13 @@ public class SinglePlayer implements Screen {
 		currentTime+=Gdx.graphics.getDeltaTime();
 		regenTime+=Gdx.graphics.getDeltaTime();
 		missileSpawner.Update();
-		if(missileSpawner.complete){
+		if(missileSpawner.complete&&ICBMList.isEmpty()){
 			//score
 			//reset buildings
 			//tell the player wtf is going on
-			missileSpawner= new Spawner(missileSpawner.delay*difficulty, ICBMList, (int)(missileSpawner.maxAmt*difficulty));
+			//you win!
+			game.setScreen(new YouWin(vpWidth, vpHeight, game));
+			//missileSpawner= new Spawner(missileSpawner.delay*difficulty, ICBMList, (int)(missileSpawner.maxAmt*difficulty));
 		}
 		shapeBatch.begin(ShapeType.Line);
 		if (Gdx.input.isTouched()&&Gdx.input.justTouched()&&!missileBuilding.damaged) {

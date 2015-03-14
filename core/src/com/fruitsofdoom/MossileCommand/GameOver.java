@@ -63,6 +63,7 @@ public class GameOver implements Screen {
 	public void hide() {
 		// TODO Auto-generated method stub
 
+	
 	}
 
 	@Override
