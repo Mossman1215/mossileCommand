@@ -39,6 +39,7 @@ public class SinglePlayer implements Screen {
 	float regenTime =0;
 	Game game;
 	Spawner missileSpawner;
+	int score =0;
 	public SinglePlayer(Game game) {
 		camera = new OrthographicCamera(vpWidth, vpHeight);
 		batch = new SpriteBatch();
