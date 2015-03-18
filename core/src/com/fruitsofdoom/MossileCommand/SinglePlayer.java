@@ -31,7 +31,7 @@ public class SinglePlayer implements Screen {
 	Building missileBuilding;
 	float cooldown = .5f;
 	float currentTime =0;
-	int wave = 0;
+	int wave;
 	float difficulty = 1.25f;
 	int maxAmmo = 10;
 	int currentAmmo = 10;
@@ -40,7 +40,8 @@ public class SinglePlayer implements Screen {
 	Game game;
 	Spawner missileSpawner;
 	int score =0;
-	public SinglePlayer(Game game) {
+	int previousScore;
+	public SinglePlayer(Game game,int previousScore,int wave) {
 		camera = new OrthographicCamera(vpWidth, vpHeight);
 		batch = new SpriteBatch();
 		shapeBatch = new ShapeRenderer();
@@ -60,6 +61,8 @@ public class SinglePlayer implements Screen {
 		}
 		missileSpawner = new Spawner(1.5f, ICBMList, 10);
 		this.game = game;
+		this.previousScore = previousScore;
+		this.wave = wave;
 	}
 
 	@Override
@@ -80,7 +83,12 @@ public class SinglePlayer implements Screen {
 					score+=1000;
 				}
 			}
-			game.setScreen(new ScoreScreen(vpWidth, vpHeight, game,score));
+			wave++;
+			if(wave==2){
+				//save the high Score
+				game.setScreen(new YouWin(vpWidth, vpHeight, game));
+			}
+			game.setScreen(new ScoreScreen(vpWidth, vpHeight, game,score,previousScore,wave));
 		}
 		shapeBatch.begin(ShapeType.Line);
 		if (Gdx.input.isTouched()&&Gdx.input.justTouched()&&!missileBuilding.damaged) {

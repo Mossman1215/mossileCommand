@@ -57,7 +57,7 @@ public class MainMenu implements Screen {
 		}
 	}
 	public void load1P(){
-		game.setScreen(new SinglePlayer(game));
+		game.setScreen(new SinglePlayer(game,0,0));
 		this.dispose();
 	}
 	public void load2P(){

@@ -15,7 +15,9 @@ public class ScoreScreen implements Screen {
 	int vpHeight;
 	Game game;
 	int roundScore;
-	public ScoreScreen (int viewWidth,int viewHeight,Game game,int roundScore){
+	int previousScore;
+	int wave;
+	public ScoreScreen (int viewWidth,int viewHeight,Game game,int roundScore,int previousScore,int wave){
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		vpWidth = viewWidth;
@@ -23,6 +25,8 @@ public class ScoreScreen implements Screen {
 		font.scale(2f);
 		this.game = game;
 		this.roundScore = roundScore;
+		this.previousScore = previousScore;
+		this.wave = wave;
 	}
 	@Override
 	public void show() {
@@ -39,12 +43,13 @@ public class ScoreScreen implements Screen {
 		batch.begin();
 		font.draw(batch, "Your score",vpWidth/2-100, vpHeight/2);
 		font.draw(batch, "round score: "+roundScore,vpWidth/2-100, vpHeight/2-50);
-		//font.draw(batch, "+"gamescore,vpWidth/2-100, vpHeight/2+100);
-		//font.draw(batch, ""totalscore+gamescore,vpWidth/2-100, vpHeight/2+150);
+		font.draw(batch, "+ "+previousScore,vpWidth/2-100, vpHeight/2-100);
+		int totalScore = previousScore+roundScore;
+		font.draw(batch, "totalScore"+totalScore,vpWidth/2-100, vpHeight/2-150);
 		
 		batch.end();
 		if(Gdx.input.isTouched()&&Gdx.input.justTouched()){
-			game.setScreen(new SinglePlayer(game));
+			game.setScreen(new SinglePlayer(game,totalScore,wave));
 		}
 	}
 
