@@ -75,8 +75,12 @@ public class SinglePlayer implements Screen {
 			//reset buildings
 			//tell the player wtf is going on
 			//you win!
-			game.setScreen(new YouWin(vpWidth, vpHeight, game));
-			//missileSpawner= new Spawner(missileSpawner.delay*difficulty, ICBMList, (int)(missileSpawner.maxAmt*difficulty));
+			for(Building b:buildings){
+				if(b.visible){
+					score+=1000;
+				}
+			}
+			game.setScreen(new ScoreScreen(vpWidth, vpHeight, game,score));
 		}
 		shapeBatch.begin(ShapeType.Line);
 		if (Gdx.input.isTouched()&&Gdx.input.justTouched()&&!missileBuilding.damaged) {
@@ -114,6 +118,7 @@ public class SinglePlayer implements Screen {
 				if(m.exp!=null&&m.exp.visible){
 					if(m.exp.boundary.contains(i.position)){
 						i.visible=false;
+						score+=10;
 						i.exp = new Explosion(i.position);
 						i.speed=new Vector2(0, 0);
 					}

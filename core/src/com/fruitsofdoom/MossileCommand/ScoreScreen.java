@@ -14,13 +14,15 @@ public class ScoreScreen implements Screen {
 	int vpWidth;
 	int vpHeight;
 	Game game;
-	public ScoreScreen (int viewWidth,int viewHeight,Game game){
+	int roundScore;
+	public ScoreScreen (int viewWidth,int viewHeight,Game game,int roundScore){
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		vpWidth = viewWidth;
 		vpHeight = viewHeight;
 		font.scale(2f);
 		this.game = game;
+		this.roundScore = roundScore;
 	}
 	@Override
 	public void show() {
@@ -35,8 +37,8 @@ public class ScoreScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
-		font.draw(batch, "Your score:",vpWidth/2-100, vpHeight/2);
-		//font.draw(batch, ""totalscore,vpWidth/2-100, vpHeight/2+50);
+		font.draw(batch, "Your score",vpWidth/2-100, vpHeight/2);
+		font.draw(batch, "round score: "+roundScore,vpWidth/2-100, vpHeight/2-50);
 		//font.draw(batch, "+"gamescore,vpWidth/2-100, vpHeight/2+100);
 		//font.draw(batch, ""totalscore+gamescore,vpWidth/2-100, vpHeight/2+150);
 		
