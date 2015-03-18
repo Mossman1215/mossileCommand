@@ -43,7 +43,7 @@ public class ScoreScreen implements Screen {
 		batch.begin();
 		font.draw(batch, "Your score",vpWidth/2-100, vpHeight/2);
 		font.draw(batch, "round score: "+roundScore,vpWidth/2-100, vpHeight/2-50);
-		font.draw(batch, "+ "+previousScore,vpWidth/2-100, vpHeight/2-100);
+		font.draw(batch, "previous score +"+previousScore,vpWidth/2-100, vpHeight/2-100);
 		int totalScore = previousScore+roundScore;
 		font.draw(batch, "totalScore"+totalScore,vpWidth/2-100, vpHeight/2-150);
 		

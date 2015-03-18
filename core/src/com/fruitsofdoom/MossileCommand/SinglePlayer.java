@@ -70,24 +70,20 @@ public class SinglePlayer implements Screen {
 		camera.update();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		if(wave==10){
+			//save the high Score
+			game.setScreen(new YouWin(vpWidth, vpHeight, game));
+		}
 		currentTime+=Gdx.graphics.getDeltaTime();
 		regenTime+=Gdx.graphics.getDeltaTime();
 		missileSpawner.Update();
 		if(missileSpawner.complete&&ICBMList.isEmpty()){
-			//score
-			//reset buildings
-			//tell the player wtf is going on
-			//you win!
 			for(Building b:buildings){
 				if(b.visible){
 					score+=1000;
 				}
 			}
 			wave++;
-			if(wave==2){
-				//save the high Score
-				game.setScreen(new YouWin(vpWidth, vpHeight, game));
-			}
 			game.setScreen(new ScoreScreen(vpWidth, vpHeight, game,score,previousScore,wave));
 		}
 		shapeBatch.begin(ShapeType.Line);
