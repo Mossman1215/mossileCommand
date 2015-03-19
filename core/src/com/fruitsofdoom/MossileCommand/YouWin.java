@@ -37,7 +37,7 @@ public class YouWin implements Screen {
 		font.draw(batch, "YOU WIN",vpWidth/2-100, vpHeight/2);
 		batch.end();
 		if(Gdx.input.isTouched()&&Gdx.input.justTouched()){
-			game.setScreen(new SinglePlayer(game,0,0));
+			game.setScreen(new SinglePlayer(game,0,1));
 		}
 	}
 

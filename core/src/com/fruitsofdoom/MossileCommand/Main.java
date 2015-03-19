@@ -8,7 +8,7 @@ public class Main extends Game {
 	int currentWave;
 	@Override
 	public void create() {
-		this.setScreen(new SinglePlayer(this,0,0));
+		this.setScreen(new SinglePlayer(this,0,1));
 	}
 	
 }

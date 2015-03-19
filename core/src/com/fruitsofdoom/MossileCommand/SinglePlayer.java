@@ -59,7 +59,7 @@ public class SinglePlayer implements Screen {
 			buildings[i] = new Building(i * vpWidth / 4 + 100, 0,
 					Building.typeOfBuild.civilian, 60, 48, build);
 		}
-		missileSpawner = new Spawner(1.5f, ICBMList, 10);
+		missileSpawner = new Spawner(1.5f, ICBMList, 10*((int)(wave*1.1)));
 		this.game = game;
 		this.previousScore = previousScore;
 		this.wave = wave;
@@ -123,7 +123,9 @@ public class SinglePlayer implements Screen {
 					if(m.exp.boundary.contains(i.position)){
 						i.visible=false;
 						score+=10;
-						i.exp = new Explosion(i.position);
+						if(i.exp==null){
+							i.exp = new Explosion(i.position);
+						}
 						i.speed=new Vector2(0, 0);
 					}
 				}

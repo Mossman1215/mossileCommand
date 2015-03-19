@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -21,12 +22,13 @@ public class MainMenu implements Screen {
 	Rectangle menu2 = new Rectangle(-90,-40,180,60);
 	BitmapFont font = new BitmapFont();
 	Vector3 touchpt = new Vector3();
-	
+	Texture option1,option2;
 	public MainMenu(final Game game){
 		this.game = game;
-		camera = new OrthographicCamera(480, 320);
+		camera = new OrthographicCamera(1280, 720);
 		shapeRenderer = new ShapeRenderer();
 		font.scale(2);
+		option1 = new Texture("");
 	}
 	@Override
 	public void render(float delta) {
@@ -35,11 +37,9 @@ public class MainMenu implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		shapeRenderer.setColor(1, 1, 1, 1);
 		shapeRenderer.begin(ShapeType.Line);
-		shapeRenderer.rect(menu1.x,menu1.y,menu1.width,menu1.height);
-		shapeRenderer.rect(menu2.x, menu2.y, menu2.width, menu2.height);
 		shapeRenderer.end();
 		batch.begin();
-		font.draw(batch, "Mossile Command", menu1.x+210, menu1.y+270);
+				
 		batch.end();
 		if(Gdx.input.isTouched()){
 			int x = Gdx.input.getX();
@@ -57,7 +57,7 @@ public class MainMenu implements Screen {
 		}
 	}
 	public void load1P(){
-		game.setScreen(new SinglePlayer(game,0,0));
+		game.setScreen(new SinglePlayer(game,0,1));
 		this.dispose();
 	}
 	public void load2P(){

@@ -37,7 +37,7 @@ public class GameOver implements Screen {
 		font.draw(batch, "GAME OVER",vpWidth/2-100, vpHeight/2);
 		batch.end();
 		if(Gdx.input.isTouched()&&Gdx.input.justTouched()){
-			game.setScreen(new SinglePlayer(game,0,0));
+			game.setScreen(new SinglePlayer(game,0,1));
 		}
 	}
 
