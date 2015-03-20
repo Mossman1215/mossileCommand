@@ -18,17 +18,19 @@ public class MainMenu implements Screen {
 	OrthographicCamera camera;
 	ShapeRenderer shapeRenderer;
 	SpriteBatch batch = new SpriteBatch();
-	Rectangle menu1 = new Rectangle(-90, 40, 180, 60);
-	Rectangle menu2 = new Rectangle(-90,-40,180,60);
+	Rectangle menu1 = new Rectangle(640-283, 300, 576, 180);
+	Rectangle menu2 = new Rectangle(640-283,100,576,180);
 	BitmapFont font = new BitmapFont();
 	Vector3 touchpt = new Vector3();
-	Texture option1,option2;
+	Texture title,option1,option2;
 	public MainMenu(final Game game){
 		this.game = game;
 		camera = new OrthographicCamera(1280, 720);
 		shapeRenderer = new ShapeRenderer();
 		font.scale(2);
-		option1 = new Texture("");
+		title = new Texture("Tittle.png");
+		option1 = new Texture("singleplayer.png");
+		option2 = new Texture("multiplayer.png");
 	}
 	@Override
 	public void render(float delta) {
@@ -39,7 +41,9 @@ public class MainMenu implements Screen {
 		shapeRenderer.begin(ShapeType.Line);
 		shapeRenderer.end();
 		batch.begin();
-				
+			batch.draw(title,260,500);
+			batch.draw(option1, 640-283, 300);
+			batch.draw(option2,640-283,100);
 		batch.end();
 		if(Gdx.input.isTouched()){
 			int x = Gdx.input.getX();
