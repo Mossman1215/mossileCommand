@@ -9,6 +9,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -41,6 +42,7 @@ public class SinglePlayer implements Screen {
 	Spawner missileSpawner;
 	int score =0;
 	int previousScore;
+	BitmapFont font;
 	public SinglePlayer(Game game,int previousScore,int wave) {
 		camera = new OrthographicCamera(vpWidth, vpHeight);
 		batch = new SpriteBatch();
@@ -63,6 +65,8 @@ public class SinglePlayer implements Screen {
 		this.game = game;
 		this.previousScore = previousScore;
 		this.wave = wave;
+		font = new BitmapFont();
+		font.setScale(2);
 	}
 
 	@Override
@@ -193,11 +197,13 @@ public class SinglePlayer implements Screen {
 			batch.draw(bullet, i*20, 50,10,20);
 		}
 		missileBuilding.render(batch);
+		font.draw(batch, "Wave: "+wave, 20, 700);
 		batch.end();
 		if(missileBuilding.damaged&&!missileBuilding.visible){
 			game.setScreen(new GameOver(vpWidth, vpHeight,game));
 			this.dispose();
 		}
+		
 	}
 	
 	
