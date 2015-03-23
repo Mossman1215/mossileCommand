@@ -18,8 +18,8 @@ public class MainMenu implements Screen {
 	OrthographicCamera camera;
 	ShapeRenderer shapeRenderer;
 	SpriteBatch batch = new SpriteBatch();
-	Rectangle menu1 = new Rectangle(640-283, 300, 576, 180);
-	Rectangle menu2 = new Rectangle(640-283,100,576,180);
+	Rectangle menu1 = new Rectangle(-300, -100, 576, 180);
+	Rectangle menu2 = new Rectangle(-300,-300,576,180);
 	BitmapFont font = new BitmapFont();
 	Vector3 touchpt = new Vector3();
 	Texture title,option1,option2;
@@ -39,11 +39,13 @@ public class MainMenu implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		shapeRenderer.setColor(1, 1, 1, 1);
 		shapeRenderer.begin(ShapeType.Line);
+		//shapeRenderer.box(x, y, z, width, height, depth);
 		shapeRenderer.end();
+		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-			batch.draw(title,260,500);
-			batch.draw(option1, 640-283, 300);
-			batch.draw(option2,640-283,100);
+			batch.draw(title,-400,100);
+			batch.draw(option1, -300, -100);
+			batch.draw(option2,-300,-300);
 		batch.end();
 		if(Gdx.input.isTouched()){
 			int x = Gdx.input.getX();
@@ -52,6 +54,7 @@ public class MainMenu implements Screen {
 			touchpt.y = y;
 			touchpt.z = 0;
 			camera.unproject(touchpt);
+			System.out.println(touchpt.toString());
 			if(menu1.contains(touchpt.x,touchpt.y)){
 				load1P();
 			}
