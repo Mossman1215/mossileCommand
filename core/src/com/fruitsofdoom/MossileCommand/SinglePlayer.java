@@ -214,6 +214,7 @@ public class SinglePlayer implements Screen {
 	
 	@Override
 	public void show() {
+		music.setVolume(.2f);
 		music.play();
 	}
 
@@ -230,18 +231,19 @@ public class SinglePlayer implements Screen {
 
 	@Override
 	public void resume() {
-
+		music.play();
 	}
 
 	@Override
 	public void hide() {
-
+		music.pause();
 	}
 
 	@Override
 	public void dispose() {
 		batch.dispose();
 		shapeBatch.dispose();
+		music.stop();
 		music.dispose();
 	}
 
