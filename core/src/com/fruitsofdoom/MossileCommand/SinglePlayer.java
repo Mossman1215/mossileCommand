@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.loaders.MusicLoader;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -43,6 +46,7 @@ public class SinglePlayer implements Screen {
 	int score =0;
 	int previousScore;
 	BitmapFont font;
+	Music music;
 	public SinglePlayer(Game game,int previousScore,int wave) {
 		camera = new OrthographicCamera(vpWidth, vpHeight);
 		batch = new SpriteBatch();
@@ -67,6 +71,7 @@ public class SinglePlayer implements Screen {
 		this.wave = wave;
 		font = new BitmapFont();
 		font.setScale(2);
+		music = Gdx.audio.newMusic(Gdx.files.internal("wo theh.mp3"));
 	}
 
 	@Override
@@ -209,7 +214,7 @@ public class SinglePlayer implements Screen {
 	
 	@Override
 	public void show() {
-
+		music.play();
 	}
 
 
@@ -220,7 +225,7 @@ public class SinglePlayer implements Screen {
 
 	@Override
 	public void pause() {
-
+		music.pause();
 	}
 
 	@Override
@@ -237,6 +242,7 @@ public class SinglePlayer implements Screen {
 	public void dispose() {
 		batch.dispose();
 		shapeBatch.dispose();
+		music.dispose();
 	}
 
 }
