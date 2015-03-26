@@ -1,5 +1,7 @@
 package com.fruitsofdoom.MossileCommand;
 
+import java.util.LinkedList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -14,7 +16,6 @@ public class ICBM {
 	Vector2 startPt;
 	Vector2 speed;
 	Vector2 difference;
-	Explosion exp = null;
 	/**
 	 * 
 	 * @param speed sets max speed downwards
@@ -29,15 +30,12 @@ public class ICBM {
 		difference.nor();
 		this.speed.scl(difference);
 	}
-	public void update() {
+	public void update(LinkedList<Explosion> explosions) {
 		//System.out.println(this+","+position.x+","+position.y+",");
 		position.mulAdd(speed, Gdx.graphics.getDeltaTime());
 		if (position.dst(target) < 10 && visible){
-			exp=new Explosion(position);
+			explosions.add(new Explosion(position));
 			visible = false;
-		}
-		if(exp!=null){
-			exp.update();
 		}
 	}
 
@@ -45,9 +43,6 @@ public class ICBM {
 		if (visible) {
 			batch.setColor(Color.YELLOW);
 			batch.line(startPt,position);
-		}
-		if(exp!=null){
-			exp.render(batch);
 		}
 	}
 }

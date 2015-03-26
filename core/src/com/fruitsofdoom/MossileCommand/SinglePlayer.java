@@ -1,14 +1,13 @@
 package com.fruitsofdoom.MossileCommand;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.loaders.MusicLoader;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,6 +23,7 @@ public class SinglePlayer implements Screen {
 	Texture build, missileTurret,bullet;
 	ShapeRenderer shapeBatch;
 	Vector2 touch = new Vector2();
+	LinkedList<Explosion> explosions;
 	OrthographicCamera camera;
 	LinkedList<Missile> missileList;
 	ArrayList<Missile> removeList;
@@ -55,6 +55,7 @@ public class SinglePlayer implements Screen {
 		build = new Texture("buildings.png");
 		missileTurret = new Texture("missilebuilding.png");
 		bullet = new Texture("bullet.png");
+		explosions = new LinkedList<Explosion>();
 		removeList = new ArrayList<Missile>();
 		ICBMList = new LinkedList<ICBM>();
 		removeIList = new ArrayList<ICBM>();
@@ -109,45 +110,63 @@ public class SinglePlayer implements Screen {
 			currentAmmo++;
 			regenTime=0;
 		}
+		//missile collisions
 		for (Missile m : missileList) {
-			m.update();
+			m.update(explosions);
 			m.render(shapeBatch);
-			if (!m.visible && !m.exp.visible) {
+			if (!m.visible) {
 				removeList.add(m);
 			}
 			for (Building b : buildings) {
 				if (b.boundary.contains(m.position)) {
 					b.damaged = true;
-					m.exp = new Explosion(m.position);
+					explosions.add(new Explosion(m.position));
 					m.visible=false;
-				}
-				if (m.exp != null&&m.exp.visible) {
-					if (Intersector.overlaps(m.exp.boundary,b.boundary)) {
-						b.damaged = true;
-					}
-				}
+				}	
 			}
+		}
+		//explosion collisions
+		ArrayList<Vector2> newExp=new ArrayList<Vector2>();
+		Iterator<Explosion> iter = explosions.iterator();
+		while(iter.hasNext()){
+			Explosion e = iter.next();
+			//missile to icbm collisions
+			e.update();
+			e.render(shapeBatch);
 			for(ICBM i:ICBMList){
-				if(m.exp!=null&&m.exp.visible){
-					if(m.exp.boundary.contains(i.position)){
+				if(e.visible){
+					if(e.boundary.contains(i.position)){
 						i.visible=false;
 						score+=10;
-						if(i.exp==null){
-							i.exp = new Explosion(i.position);
-						}
+						//explosions.add(new Explosion(i.position));
+						newExp.add(i.position);
 						i.speed=new Vector2(0, 0);
 					}
 				}
-				if(i.exp!=null&&i.exp.visible){
-					if(i.exp.boundary.contains(m.position)){
-						m.visible=false;
-						m.exp = new Explosion(m.position);
+			}
+			for(Building b:buildings){
+				//player missile to building collisions
+				if (e.visible) {
+					if (Intersector.overlaps(e.boundary,b.boundary)) {
+						b.damaged = true;
+					}
+				}
+				//icbm to building collisions
+				if(e.visible){
+					if(Intersector.overlaps(e.boundary, b.boundary)){
+						b.damaged=true;
+					}
+					if(Intersector.overlaps(e.boundary, missileBuilding.boundary)){
+						missileBuilding.damaged=true;
 					}
 				}
 			}
 		}
+		for(Vector2 v:newExp){
+			explosions.add(new Explosion(v));
+		}
 		for(ICBM i:ICBMList){
-			if(!i.visible&&!i.exp.visible){
+			if(!i.visible){
 				removeIList.add(i);
 			}
 		}
@@ -168,29 +187,21 @@ public class SinglePlayer implements Screen {
 			removeList = new ArrayList<Missile>();
 		}
 		for (ICBM i: ICBMList){
-			i.update();
+			i.update(explosions);
 			i.render(shapeBatch);
 			for(Building b:buildings){
 				if(i.visible){
 					if(b.boundary.contains(i.position)){
 						b.damaged=true;
 						i.visible=false;
-						i.exp=new Explosion(i.position);
+						explosions.add(new Explosion(i.position));
 						i.speed=new Vector2(0,0);
-					}
-				}
-				if(i.exp!=null&&i.exp.visible){
-					if(Intersector.overlaps(i.exp.boundary, b.boundary)){
-						b.damaged=true;
-					}
-					if(Intersector.overlaps(i.exp.boundary, missileBuilding.boundary)){
-						missileBuilding.damaged=true;
 					}
 				}
 			}
 			if(missileBuilding.boundary.contains(i.position)){
 				missileBuilding.damaged = true;
-				i.exp=new Explosion(i.position);
+				explosions.add(new Explosion(i.position));
 			}
 		}
 		shapeBatch.end();

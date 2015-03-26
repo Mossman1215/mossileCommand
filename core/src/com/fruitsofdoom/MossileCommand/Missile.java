@@ -1,5 +1,7 @@
 package com.fruitsofdoom.MossileCommand;
 
+import java.util.LinkedList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -13,7 +15,6 @@ public class Missile {
 	Vector2 startPt;
 	Vector2 speed;
 	Vector2 difference;
-	Explosion exp = null;
 
 	public Missile(Vector2 touch, int vpWidth) {
 		visible = true;
@@ -28,14 +29,11 @@ public class Missile {
 		speed = speed.scl(difference);
 	}
 
-	public void update() {
+	public void update(LinkedList<Explosion> explosions) {
 		position.mulAdd(speed, Gdx.graphics.getDeltaTime());
 		if (position.dst(touch) < 10 && visible) {
-			exp = new Explosion(position);
+			explosions.add(new Explosion(position));
 			visible = false;
-		}
-		if (exp != null) {
-			exp.update();
 		}
 	}
 
@@ -43,9 +41,6 @@ public class Missile {
 		if (visible) {
 			batch.setColor(Color.GREEN);
 			batch.line(startPt, position);
-		}
-		if (exp != null) {
-			exp.render(batch);
 		}
 	}
 }
