@@ -3,6 +3,7 @@ package com.fruitsofdoom.MossileCommand;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -23,6 +24,7 @@ public class MainMenu implements Screen {
 	BitmapFont font = new BitmapFont();
 	Vector3 touchpt = new Vector3();
 	Texture title,option1,option2,helpHint,twitter;
+	Sound click; 
 	public MainMenu(final Game game){
 		this.game = game;
 		camera = new OrthographicCamera(1280, 720);
@@ -33,6 +35,7 @@ public class MainMenu implements Screen {
 		option2 = new Texture("multiplayer.png");
 		helpHint = new Texture("help text.png");
 		twitter = new Texture("twitterShoutout.png");
+		click = Gdx.audio.newSound(Gdx.files.internal("click button.mp3"));
 	}
 	@Override
 	public void render(float delta) {
@@ -58,8 +61,8 @@ public class MainMenu implements Screen {
 			touchpt.y = y;
 			touchpt.z = 0;
 			camera.unproject(touchpt);
-			System.out.println(touchpt.toString());
 			if(menu1.contains(touchpt.x,touchpt.y)){
+				click.play(1f);
 				load1P();
 			}
 			if(menu2.contains(touchpt.x,touchpt.y)){

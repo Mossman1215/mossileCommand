@@ -8,6 +8,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -47,6 +48,7 @@ public class SinglePlayer implements Screen {
 	int previousScore;
 	BitmapFont font;
 	Music music;
+	Sound shoot,explode;
 	public SinglePlayer(Game game,int previousScore,int wave) {
 		camera = new OrthographicCamera(vpWidth, vpHeight);
 		batch = new SpriteBatch();
@@ -73,6 +75,8 @@ public class SinglePlayer implements Screen {
 		font = new BitmapFont();
 		font.setScale(2);
 		music = Gdx.audio.newMusic(Gdx.files.internal("wo theh.mp3"));
+		shoot = Gdx.audio.newSound(Gdx.files.internal("Missile Launch.mp3"));
+		explode = Gdx.audio.newSound(Gdx.files.internal("explosion.mp3"));
 	}
 
 	@Override
@@ -103,6 +107,7 @@ public class SinglePlayer implements Screen {
 				missileList.add(new Missile(new Vector2(Gdx.input.getX(), vpHeight - Gdx.input.getY()), vpWidth));
 				currentTime=0;
 				currentAmmo--;
+				shoot.play(.3f);
 				}
 			}
 		}
@@ -122,6 +127,7 @@ public class SinglePlayer implements Screen {
 					b.damaged = true;
 					explosions.add(new Explosion(m.position));
 					m.visible=false;
+					explode.play(.2f);
 				}	
 			}
 		}
@@ -141,6 +147,7 @@ public class SinglePlayer implements Screen {
 						//explosions.add(new Explosion(i.position));
 						newExp.add(i.position);
 						i.speed=new Vector2(0, 0);
+						explode.play(.2f);
 					}
 				}
 			}
@@ -164,6 +171,7 @@ public class SinglePlayer implements Screen {
 		}
 		for(Vector2 v:newExp){
 			explosions.add(new Explosion(v));
+			explode.play(.2f);
 		}
 		for(ICBM i:ICBMList){
 			if(!i.visible){
@@ -196,12 +204,14 @@ public class SinglePlayer implements Screen {
 						i.visible=false;
 						explosions.add(new Explosion(i.position));
 						i.speed=new Vector2(0,0);
+						explode.play(.2f);
 					}
 				}
 			}
 			if(missileBuilding.boundary.contains(i.position)){
 				missileBuilding.damaged = true;
 				explosions.add(new Explosion(i.position));
+				explode.play(.2f);
 			}
 		}
 		shapeBatch.end();
