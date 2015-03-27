@@ -22,7 +22,7 @@ public class MainMenu implements Screen {
 	Rectangle menu2 = new Rectangle(-300,-300,576,180);
 	BitmapFont font = new BitmapFont();
 	Vector3 touchpt = new Vector3();
-	Texture title,option1,option2;
+	Texture title,option1,option2,helpHint,twitter;
 	public MainMenu(final Game game){
 		this.game = game;
 		camera = new OrthographicCamera(1280, 720);
@@ -31,6 +31,8 @@ public class MainMenu implements Screen {
 		title = new Texture("Tittle.png");
 		option1 = new Texture("singleplayer.png");
 		option2 = new Texture("multiplayer.png");
+		helpHint = new Texture("help text.png");
+		twitter = new Texture("twitterShoutout.png");
 	}
 	@Override
 	public void render(float delta) {
@@ -46,6 +48,8 @@ public class MainMenu implements Screen {
 			batch.draw(title,-400,100);
 			batch.draw(option1, -300, -100);
 			batch.draw(option2,-300,-300);
+			batch.draw(helpHint,-630,-250);
+			batch.draw(twitter,290,-250);
 		batch.end();
 		if(Gdx.input.isTouched()){
 			int x = Gdx.input.getX();
