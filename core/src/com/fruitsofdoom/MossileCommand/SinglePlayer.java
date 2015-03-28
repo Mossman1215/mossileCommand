@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public class SinglePlayer implements Screen {
@@ -74,7 +75,17 @@ public class SinglePlayer implements Screen {
 		this.wave = wave;
 		font = new BitmapFont();
 		font.setScale(2);
-		music = Gdx.audio.newMusic(Gdx.files.internal("wo theh.mp3"));
+		
+		if(wave==10){
+			music = Gdx.audio.newMusic(Gdx.files.internal("Shoot 'em Down(1).mp3"));
+			music.setLooping(true);
+		}{
+			if(MathUtils.randomBoolean()){
+				music = Gdx.audio.newMusic(Gdx.files.internal("Wo Theh(1).mp3"));
+			}else{
+				music = Gdx.audio.newMusic(Gdx.files.internal("Under Watchful Eyes.mp3"));
+			}
+		}
 		shoot = Gdx.audio.newSound(Gdx.files.internal("Missile Launch.mp3"));
 		explode = Gdx.audio.newSound(Gdx.files.internal("explosion.mp3"));
 	}
