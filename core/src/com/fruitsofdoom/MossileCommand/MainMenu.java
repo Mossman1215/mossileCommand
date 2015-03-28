@@ -20,10 +20,9 @@ public class MainMenu implements Screen {
 	ShapeRenderer shapeRenderer;
 	SpriteBatch batch = new SpriteBatch();
 	Rectangle menu1 = new Rectangle(-300, -100, 576, 180);
-	Rectangle menu2 = new Rectangle(-300,-300,576,180);
 	BitmapFont font = new BitmapFont();
 	Vector3 touchpt = new Vector3();
-	Texture title,option1,option2,helpHint,twitter;
+	Texture title,option1,helpHint,twitter;
 	Sound click; 
 	public MainMenu(final Game game){
 		this.game = game;
@@ -32,7 +31,6 @@ public class MainMenu implements Screen {
 		font.scale(2);
 		title = new Texture("Tittle.png");
 		option1 = new Texture("singleplayer.png");
-		option2 = new Texture("multiplayer.png");
 		helpHint = new Texture("help text.png");
 		twitter = new Texture("twitterShoutout.png");
 		click = Gdx.audio.newSound(Gdx.files.internal("click button.mp3"));
@@ -50,7 +48,6 @@ public class MainMenu implements Screen {
 		batch.begin();
 			batch.draw(title,-400,100);
 			batch.draw(option1, -300, -100);
-			batch.draw(option2,-300,-300);
 			batch.draw(helpHint,-630,-250);
 			batch.draw(twitter,290,-250);
 		batch.end();
@@ -65,17 +62,10 @@ public class MainMenu implements Screen {
 				click.play(1f);
 				load1P();
 			}
-			if(menu2.contains(touchpt.x,touchpt.y)){
-				load2P();
-			}
 		}
 	}
 	public void load1P(){
 		game.setScreen(new SinglePlayer(game,0,1));
-		this.dispose();
-	}
-	public void load2P(){
-		//game.setScreen(new TwoPlayerScreen(game));
 		this.dispose();
 	}
 	@Override
