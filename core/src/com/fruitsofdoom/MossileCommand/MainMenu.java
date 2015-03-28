@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -20,20 +21,27 @@ public class MainMenu implements Screen {
 	ShapeRenderer shapeRenderer;
 	SpriteBatch batch = new SpriteBatch();
 	Rectangle menu1 = new Rectangle(-300, -100, 576, 180);
-	BitmapFont font = new BitmapFont();
+	BitmapFont font;
 	Vector3 touchpt = new Vector3();
 	Texture title,option1,helpHint,twitter;
 	Sound click; 
+	String highscore;
+	
 	public MainMenu(final Game game){
 		this.game = game;
 		camera = new OrthographicCamera(1280, 720);
 		shapeRenderer = new ShapeRenderer();
+		font = new BitmapFont();
 		font.scale(2);
 		title = new Texture("Tittle.png");
 		option1 = new Texture("singleplayer.png");
 		helpHint = new Texture("help text.png");
 		twitter = new Texture("twitterShoutout.png");
 		click = Gdx.audio.newSound(Gdx.files.internal("click button.mp3"));
+		if(Gdx.files.local("highscore.txt").exists()){
+			FileHandle file = Gdx.files.local("highscore.txt");
+			highscore = file.readString();
+		}
 	}
 	@Override
 	public void render(float delta) {
@@ -50,6 +58,7 @@ public class MainMenu implements Screen {
 			batch.draw(option1, -300, -100);
 			batch.draw(helpHint,-630,-250);
 			batch.draw(twitter,290,-250);
+			font.draw(batch,"highscore: "+highscore, -150, -300);
 		batch.end();
 		if(Gdx.input.isTouched()){
 			int x = Gdx.input.getX();
@@ -76,8 +85,7 @@ public class MainMenu implements Screen {
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override

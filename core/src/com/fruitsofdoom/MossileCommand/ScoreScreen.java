@@ -3,6 +3,7 @@ package com.fruitsofdoom.MossileCommand;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -17,6 +18,7 @@ public class ScoreScreen implements Screen {
 	int roundScore;
 	int previousScore;
 	int wave;
+	String highscore;
 	public ScoreScreen (int viewWidth,int viewHeight,Game game,int roundScore,int previousScore,int wave){
 		batch = new SpriteBatch();
 		font = new BitmapFont();
@@ -31,6 +33,18 @@ public class ScoreScreen implements Screen {
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
+		int total = roundScore+previousScore;
+		if(!Gdx.files.local("highscore.txt").exists()){
+			FileHandle file = Gdx.files.local("highscore.txt");
+			file.writeString(""+total, false);
+		}else{
+			FileHandle file = Gdx.files.local("highscore.txt");
+			String highscore = file.readString();
+			if(Integer.parseInt(highscore)<total){
+				file.writeString(""+total, false);
+			}
+			this.highscore =highscore;
+		}
 	}
 
 	@Override
@@ -46,7 +60,7 @@ public class ScoreScreen implements Screen {
 		font.draw(batch, "previous score +"+previousScore,vpWidth/2-100, vpHeight/2-100);
 		int totalScore = previousScore+roundScore;
 		font.draw(batch, "totalScore"+totalScore,vpWidth/2-100, vpHeight/2-150);
-		
+		font.draw(batch, "highscore: "+highscore , vpWidth/2-10, 100);
 		batch.end();
 		if(Gdx.input.isTouched()&&Gdx.input.justTouched()){
 			game.setScreen(new SinglePlayer(game,totalScore,wave));
