@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class SinglePlayer implements Screen {
 	SpriteBatch batch;
@@ -62,12 +63,14 @@ public class SinglePlayer implements Screen {
 		removeList = new ArrayList<Missile>();
 		ICBMList = new LinkedList<ICBM>();
 		removeIList = new ArrayList<ICBM>();
-		missileBuilding = new Building(vpWidth / 2 - 75, 0,
+		missileBuilding = new Building(0-50, -vpHeight/2,
 				Building.typeOfBuild.military, 100, 85, missileTurret);
 		buildings = new Building[4];
+		int buildPos = -640+ 100; //start position for a building
 		for (int i = 0; i < 4; i++) {
-			buildings[i] = new Building(i * vpWidth / 4 + 100, 0,
+			buildings[i] = new Building(buildPos, -360,
 					Building.typeOfBuild.civilian, 60, 48, build);
+			buildPos+=320;
 		}
 		missileSpawner = new Spawner(1.5f, ICBMList, 10*((int)(wave*1.1)));
 		this.game = game;
@@ -95,7 +98,7 @@ public class SinglePlayer implements Screen {
 		camera.update();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		if(wave==10){
+		if(wave==11){
 			//save the high Score
 			game.setScreen(new YouWin(vpWidth, vpHeight, game));
 		}
@@ -111,11 +114,14 @@ public class SinglePlayer implements Screen {
 			wave++;
 			game.setScreen(new ScoreScreen(vpWidth, vpHeight, game,score,previousScore,wave));
 		}
+		shapeBatch.setProjectionMatrix(camera.combined);
 		shapeBatch.begin(ShapeType.Line);
 		if (Gdx.input.isTouched()&&Gdx.input.justTouched()&&!missileBuilding.damaged) {
+			Vector3 touchpt = new Vector3(Gdx.input.getX(),Gdx.input.getY(),0);
+			camera.unproject(touchpt);
 			if(currentAmmo>0){
 			if(currentTime>cooldown){
-				missileList.add(new Missile(new Vector2(Gdx.input.getX(), vpHeight - Gdx.input.getY()), vpWidth));
+				missileList.add(new Missile(new Vector2(touchpt.x, touchpt.y), vpWidth));
 				currentTime=0;
 				currentAmmo--;
 				shoot.play(.3f);
@@ -226,15 +232,16 @@ public class SinglePlayer implements Screen {
 			}
 		}
 		shapeBatch.end();
+		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		for (Building b : buildings) {
 			b.render(batch);
 		}
 		for(int i = 0; i<currentAmmo;i++){
-			batch.draw(bullet, i*20, 50,10,20);
+			batch.draw(bullet, 20-640+i*20, 280,10,20);
 		}
 		missileBuilding.render(batch);
-		font.draw(batch, "Wave: "+wave, 20, 700);
+		font.draw(batch, "Wave: "+wave, -((vpWidth/2)-20), (vpHeight/2)-20);
 		batch.end();
 		if(missileBuilding.damaged&&!missileBuilding.visible){
 			game.setScreen(new GameOver(vpWidth, vpHeight,game));

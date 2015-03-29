@@ -21,9 +21,9 @@ public class ICBM {
 	 * @param speed sets max speed downwards
 	 */
 	public ICBM(float speed){
-		startPt = new Vector2(MathUtils.random(1280), 720);
+		startPt = new Vector2(MathUtils.random(-(1280/2), (1280/2)), 360);
 		position = new Vector2(startPt.x,startPt.y);
-		target = new Vector2(MathUtils.random(1280),0);
+		target = new Vector2(MathUtils.random(-(1280/2), (1280/2)),-360);
 		this.speed = new Vector2(25*speed,25*speed);
 		difference = new Vector2(target.x, target.y);
 		difference = difference.sub(position);
