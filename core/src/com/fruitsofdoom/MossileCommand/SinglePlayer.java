@@ -142,6 +142,7 @@ public class SinglePlayer implements Screen {
 			for (Building b : buildings) {
 				if (b.boundary.contains(m.position)) {
 					b.damaged = true;
+					Gdx.app.log("Hello","Damaged building");
 					explosions.add(new Explosion(m.position));
 					m.visible=false;
 					explode.play(.2f);

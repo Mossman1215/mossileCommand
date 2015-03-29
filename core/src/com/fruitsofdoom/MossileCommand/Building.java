@@ -17,7 +17,7 @@ public class Building {
 	int height,width;
 	Texture img;
 	Rectangle boundary;
-	float dirSwitchTime = .5f;
+	float dirSwitchTime = .05f;
 	float delta = 0;
 	public Building(int x, int y, typeOfBuild type,int width, int height, Texture img) {
 		this.type = type;
@@ -39,22 +39,24 @@ public class Building {
 				dir= direction.left;
 			}
 		}
-		if(position.y < 0-height){
+		if(position.y < -360-85){
 			visible = false;
 		}
 		if(visible){
 			if (damaged) {
 				if(dir.equals(direction.right)){
-					position.x += 10*Gdx.graphics.getDeltaTime();
+					position.x += 50*Gdx.graphics.getDeltaTime();
 				}else{
-					position.x -= 10*Gdx.graphics.getDeltaTime();
+					position.x -= 50*Gdx.graphics.getDeltaTime();
 				}
-				position.y -= 10*Gdx.graphics.getDeltaTime();
+				position.y -= 50*Gdx.graphics.getDeltaTime();
 			}
 		}
 	}
 
 	public void render(SpriteBatch batch) {
-		batch.draw(img, position.x, position.y,width,height);
+		if(visible){
+			batch.draw(img, position.x, position.y,width,height);
+		}
 	}
 }
