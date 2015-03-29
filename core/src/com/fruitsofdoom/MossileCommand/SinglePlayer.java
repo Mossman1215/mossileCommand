@@ -100,7 +100,7 @@ public class SinglePlayer implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if(wave==11){
 			//save the high Score
-			game.setScreen(new YouWin(vpWidth, vpHeight, game));
+			game.setScreen(new YouWin(vpWidth, vpHeight, game,camera,score+previousScore));
 		}
 		currentTime+=Gdx.graphics.getDeltaTime();
 		regenTime+=Gdx.graphics.getDeltaTime();
@@ -112,7 +112,7 @@ public class SinglePlayer implements Screen {
 				}
 			}
 			wave++;
-			game.setScreen(new ScoreScreen(vpWidth, vpHeight, game,score,previousScore,wave));
+			game.setScreen(new ScoreScreen(vpWidth, vpHeight, game,score,previousScore,wave,camera));
 		}
 		shapeBatch.setProjectionMatrix(camera.combined);
 		shapeBatch.begin(ShapeType.Line);
@@ -244,7 +244,7 @@ public class SinglePlayer implements Screen {
 		font.draw(batch, "Wave: "+wave, -((vpWidth/2)-20), (vpHeight/2)-20);
 		batch.end();
 		if(missileBuilding.damaged&&!missileBuilding.visible){
-			game.setScreen(new GameOver(vpWidth, vpHeight,game));
+			game.setScreen(new GameOver(vpWidth, vpHeight,game,camera,score+previousScore));
 			this.dispose();
 		}
 		
