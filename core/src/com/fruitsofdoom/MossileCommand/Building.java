@@ -49,7 +49,7 @@ public class Building {
 				}else{
 					position.x -= 50*Gdx.graphics.getDeltaTime();
 				}
-				position.y -= 50*Gdx.graphics.getDeltaTime();
+				position.y -= 10*Gdx.graphics.getDeltaTime();
 			}
 		}
 	}

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -51,6 +52,7 @@ public class SinglePlayer implements Screen {
 	BitmapFont font;
 	Music music;
 	Sound shoot,explode;
+	boolean pause =false;
 	public SinglePlayer(Game game,int previousScore,int wave) {
 		camera = new OrthographicCamera(vpWidth, vpHeight);
 		batch = new SpriteBatch();
@@ -95,6 +97,7 @@ public class SinglePlayer implements Screen {
 
 	@Override
 	public void render(float delta) {
+		if(!pause){
 		camera.update();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -113,6 +116,9 @@ public class SinglePlayer implements Screen {
 			}
 			wave++;
 			game.setScreen(new ScoreScreen(vpWidth, vpHeight, game,score,previousScore,wave,camera));
+		}
+		if(Gdx.input.isKeyJustPressed(Input.Keys.GRAVE)){
+			
 		}
 		shapeBatch.setProjectionMatrix(camera.combined);
 		shapeBatch.begin(ShapeType.Line);
@@ -142,7 +148,6 @@ public class SinglePlayer implements Screen {
 			for (Building b : buildings) {
 				if (b.boundary.contains(m.position)) {
 					b.damaged = true;
-					Gdx.app.log("Hello","Damaged building");
 					explosions.add(new Explosion(m.position));
 					m.visible=false;
 					explode.play(.2f);
@@ -248,7 +253,7 @@ public class SinglePlayer implements Screen {
 			game.setScreen(new GameOver(vpWidth, vpHeight,game,camera,score+previousScore));
 			this.dispose();
 		}
-		
+		}
 	}
 	
 	
@@ -267,11 +272,13 @@ public class SinglePlayer implements Screen {
 	@Override
 	public void pause() {
 		music.pause();
+		pause=true;
 	}
 
 	@Override
 	public void resume() {
 		music.play();
+		pause=false;
 	}
 
 	@Override
