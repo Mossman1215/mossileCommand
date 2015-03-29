@@ -86,18 +86,15 @@ public class SinglePlayer implements Screen {
 			music = Gdx.audio.newMusic(Gdx.files
 					.internal("Shoot 'em Down(1).mp3"));
 			music.setLooping(true);
-			Gdx.app.log("music", "set to final music");
 		}else{
 			if (MathUtils.randomBoolean()) {
 				music = Gdx.audio
 						.newMusic(Gdx.files.internal("Wo Theh(1).mp3"));
 				music.setLooping(true);
-				Gdx.app.log("music", "set to normal music");
 			} else {
 				music = Gdx.audio.newMusic(Gdx.files
 						.internal("Under Watchful Eyes.mp3"));
 				music.setLooping(true);
-				Gdx.app.log("music", "set to normal music");
 			}
 		}
 		shoot = Gdx.audio.newSound(Gdx.files.internal("Missile Launch.mp3"));
