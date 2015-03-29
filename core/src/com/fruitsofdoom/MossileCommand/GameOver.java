@@ -38,9 +38,10 @@ public class GameOver implements Screen {
 		//if tapped game restarts at main menu
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		font.draw(batch, "GAME OVER",-100, 0);
-		font.draw(batch,"score: "+score,100,-100);
+		font.draw(batch,"score: "+score,-100,-100);
 		batch.end();
 		if(Gdx.input.isTouched()&&Gdx.input.justTouched()){
 			game.setScreen(new MainMenu(game));
