@@ -24,7 +24,7 @@ import com.badlogic.gdx.math.Vector3;
 
 public class SinglePlayer implements Screen {
 	SpriteBatch batch;
-	Texture build, missileTurret,bullet;
+	Texture build, missileTurret, bullet;
 	ShapeRenderer shapeBatch;
 	Vector2 touch = new Vector2();
 	LinkedList<Explosion> explosions;
@@ -38,22 +38,23 @@ public class SinglePlayer implements Screen {
 	Building[] buildings;
 	Building missileBuilding;
 	float cooldown = .5f;
-	float currentTime =0;
+	float currentTime = 0;
 	int wave;
 	float difficulty = 1.25f;
 	int maxAmmo = 10;
 	int currentAmmo = 10;
 	float regenRate = 2f;
-	float regenTime =0;
+	float regenTime = 0;
 	Game game;
 	Spawner missileSpawner;
-	int score =0;
+	int score = 0;
 	int previousScore;
 	BitmapFont font;
 	Music music;
-	Sound shoot,explode;
-	boolean pause =false;
-	public SinglePlayer(Game game,int previousScore,int wave) {
+	Sound shoot, explode;
+	boolean pause = false;
+
+	public SinglePlayer(Game game, int previousScore, int wave) {
 		camera = new OrthographicCamera(vpWidth, vpHeight);
 		batch = new SpriteBatch();
 		shapeBatch = new ShapeRenderer();
@@ -65,30 +66,38 @@ public class SinglePlayer implements Screen {
 		removeList = new ArrayList<Missile>();
 		ICBMList = new LinkedList<ICBM>();
 		removeIList = new ArrayList<ICBM>();
-		missileBuilding = new Building(0-50, -vpHeight/2,
+		missileBuilding = new Building(0 - 50, -vpHeight / 2,
 				Building.typeOfBuild.military, 100, 85, missileTurret);
 		buildings = new Building[4];
-		int buildPos = -640+ 100; //start position for a building
+		int buildPos = -640 + 160; // start position for a building
 		for (int i = 0; i < 4; i++) {
 			buildings[i] = new Building(buildPos, -360,
 					Building.typeOfBuild.civilian, 60, 48, build);
-			buildPos+=320;
+			buildPos += 320;
 		}
-		missileSpawner = new Spawner(1.5f, ICBMList, 10*((int)(wave*1.1)));
+		missileSpawner = new Spawner(1.5f, ICBMList, 10 * ((int) (wave * 1.1)));
 		this.game = game;
 		this.previousScore = previousScore;
 		this.wave = wave;
 		font = new BitmapFont();
 		font.setScale(2);
-		
-		if(wave==10){
-			music = Gdx.audio.newMusic(Gdx.files.internal("Shoot 'em Down(1).mp3"));
+
+		if (wave == 10) {
+			music = Gdx.audio.newMusic(Gdx.files
+					.internal("Shoot 'em Down(1).mp3"));
 			music.setLooping(true);
-		}{
-			if(MathUtils.randomBoolean()){
-				music = Gdx.audio.newMusic(Gdx.files.internal("Wo Theh(1).mp3"));
-			}else{
-				music = Gdx.audio.newMusic(Gdx.files.internal("Under Watchful Eyes.mp3"));
+			Gdx.app.log("music", "set to final music");
+		}else{
+			if (MathUtils.randomBoolean()) {
+				music = Gdx.audio
+						.newMusic(Gdx.files.internal("Wo Theh(1).mp3"));
+				music.setLooping(true);
+				Gdx.app.log("music", "set to normal music");
+			} else {
+				music = Gdx.audio.newMusic(Gdx.files
+						.internal("Under Watchful Eyes.mp3"));
+				music.setLooping(true);
+				Gdx.app.log("music", "set to normal music");
 			}
 		}
 		shoot = Gdx.audio.newSound(Gdx.files.internal("Missile Launch.mp3"));
@@ -97,172 +106,185 @@ public class SinglePlayer implements Screen {
 
 	@Override
 	public void render(float delta) {
-		if(!pause){
-		camera.update();
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		if(wave==11){
-			//save the high Score
-			game.setScreen(new YouWin(vpWidth, vpHeight, game,camera,score+previousScore));
+		if (Gdx.input.isKeyJustPressed(Input.Keys.GRAVE)) {
+			pause = true;
+			music.pause();
 		}
-		currentTime+=Gdx.graphics.getDeltaTime();
-		regenTime+=Gdx.graphics.getDeltaTime();
-		missileSpawner.Update();
-		if(missileSpawner.complete&&ICBMList.isEmpty()){
-			for(Building b:buildings){
-				if(b.visible){
-					score+=1000;
+		if(pause){
+			if (Gdx.input.isKeyJustPressed(Input.Keys.F10)) {
+				int waveToSet =10;
+				game.setScreen(new SinglePlayer(game, previousScore, waveToSet));
+			}
+		}
+		if (!pause) {
+			camera.update();
+			Gdx.gl.glClearColor(0, 0, 0, 1);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			if (wave == 11) {
+				// save the high Score
+				game.setScreen(new YouWin(vpWidth, vpHeight, game, camera,
+						score + previousScore));
+			}
+			currentTime += Gdx.graphics.getDeltaTime();
+			regenTime += Gdx.graphics.getDeltaTime();
+			missileSpawner.Update();
+			if (missileSpawner.complete && ICBMList.isEmpty()) {
+				for (Building b : buildings) {
+					if (b.visible) {
+						score += 1000;
+					}
 				}
+				wave++;
+				game.setScreen(new ScoreScreen(vpWidth, vpHeight, game, score,
+						previousScore, wave, camera));
 			}
-			wave++;
-			game.setScreen(new ScoreScreen(vpWidth, vpHeight, game,score,previousScore,wave,camera));
-		}
-		if(Gdx.input.isKeyJustPressed(Input.Keys.GRAVE)){
-			
-		}
-		shapeBatch.setProjectionMatrix(camera.combined);
-		shapeBatch.begin(ShapeType.Line);
-		if (Gdx.input.isTouched()&&Gdx.input.justTouched()&&!missileBuilding.damaged) {
-			Vector3 touchpt = new Vector3(Gdx.input.getX(),Gdx.input.getY(),0);
-			camera.unproject(touchpt);
-			if(currentAmmo>0){
-			if(currentTime>cooldown){
-				missileList.add(new Missile(new Vector2(touchpt.x, touchpt.y), vpWidth));
-				currentTime=0;
-				currentAmmo--;
-				shoot.play(.3f);
-				}
-			}
-		}
-		if(regenTime>regenRate && currentAmmo<=maxAmmo){
-			currentAmmo++;
-			regenTime=0;
-		}
-		//missile collisions
-		for (Missile m : missileList) {
-			m.update(explosions);
-			m.render(shapeBatch);
-			if (!m.visible) {
-				removeList.add(m);
-			}
-			for (Building b : buildings) {
-				if (b.boundary.contains(m.position)) {
-					b.damaged = true;
-					explosions.add(new Explosion(m.position));
-					m.visible=false;
-					explode.play(.2f);
-				}	
-			}
-		}
-		//explosion collisions
-		ArrayList<Vector2> newExp=new ArrayList<Vector2>();
-		Iterator<Explosion> iter = explosions.iterator();
-		while(iter.hasNext()){
-			Explosion e = iter.next();
-			//missile to icbm collisions
-			e.update();
-			e.render(shapeBatch);
-			for(ICBM i:ICBMList){
-				if(e.visible){
-					if(e.boundary.contains(i.position)){
-						i.visible=false;
-						score+=10;
-						//explosions.add(new Explosion(i.position));
-						newExp.add(i.position);
-						i.speed=new Vector2(0, 0);
-						explode.play(.2f);
+			shapeBatch.setProjectionMatrix(camera.combined);
+			shapeBatch.begin(ShapeType.Line);
+			if (Gdx.input.isTouched() && Gdx.input.justTouched()
+					&& !missileBuilding.damaged) {
+				Vector3 touchpt = new Vector3(Gdx.input.getX(),
+						Gdx.input.getY(), 0);
+				camera.unproject(touchpt);
+				if (currentAmmo > 0) {
+					if (currentTime > cooldown) {
+						missileList.add(new Missile(new Vector2(touchpt.x,
+								touchpt.y), vpWidth));
+						currentTime = 0;
+						currentAmmo--;
+						shoot.play(.3f);
 					}
 				}
 			}
-			for(Building b:buildings){
-				//player missile to building collisions
-				if (e.visible) {
-					if (Intersector.overlaps(e.boundary,b.boundary)) {
+			if (regenTime > regenRate && currentAmmo <= maxAmmo) {
+				currentAmmo++;
+				regenTime = 0;
+			}
+			// missile collisions
+			for (Missile m : missileList) {
+				m.update(explosions);
+				m.render(shapeBatch);
+				if (!m.visible) {
+					removeList.add(m);
+				}
+				for (Building b : buildings) {
+					if (b.boundary.contains(m.position)) {
 						b.damaged = true;
-					}
-				}
-				//icbm to building collisions
-				if(e.visible){
-					if(Intersector.overlaps(e.boundary, b.boundary)){
-						b.damaged=true;
-					}
-					if(Intersector.overlaps(e.boundary, missileBuilding.boundary)){
-						missileBuilding.damaged=true;
-					}
-				}
-			}
-		}
-		for(Vector2 v:newExp){
-			explosions.add(new Explosion(v));
-			explode.play(.2f);
-		}
-		for(ICBM i:ICBMList){
-			if(!i.visible){
-				removeIList.add(i);
-			}
-		}
-		for(ICBM r : removeIList){
-			ICBMList.remove(r);
-		}
-		if(removeIList.size()>10){
-			removeIList= new ArrayList<ICBM>();
-		}
-		missileBuilding.update();
-		for (Building b : buildings) {
-			b.update();
-		}
-		for (Missile r : removeList) {
-			missileList.remove(r);
-		}
-		if (removeList.size() > 10) {
-			removeList = new ArrayList<Missile>();
-		}
-		for (ICBM i: ICBMList){
-			i.update(explosions);
-			i.render(shapeBatch);
-			for(Building b:buildings){
-				if(i.visible){
-					if(b.boundary.contains(i.position)){
-						b.damaged=true;
-						i.visible=false;
-						explosions.add(new Explosion(i.position));
-						i.speed=new Vector2(0,0);
+						explosions.add(new Explosion(m.position));
+						m.visible = false;
 						explode.play(.2f);
 					}
 				}
 			}
-			if(missileBuilding.boundary.contains(i.position)){
-				missileBuilding.damaged = true;
-				explosions.add(new Explosion(i.position));
+			// explosion collisions
+			ArrayList<Vector2> newExp = new ArrayList<Vector2>();
+			Iterator<Explosion> iter = explosions.iterator();
+			while (iter.hasNext()) {
+				Explosion e = iter.next();
+				// missile to icbm collisions
+				e.update();
+				e.render(shapeBatch);
+				for (ICBM i : ICBMList) {
+					if (e.visible) {
+						if (e.boundary.contains(i.position)) {
+							i.visible = false;
+							score += 10;
+							// explosions.add(new Explosion(i.position));
+							newExp.add(i.position);
+							i.speed = new Vector2(0, 0);
+							explode.play(.2f);
+						}
+					}
+				}
+				for (Building b : buildings) {
+					// player missile to building collisions
+					if (e.visible) {
+						if (Intersector.overlaps(e.boundary, b.boundary)) {
+							b.damaged = true;
+						}
+					}
+					// icbm to building collisions
+					if (e.visible) {
+						if (Intersector.overlaps(e.boundary, b.boundary)) {
+							b.damaged = true;
+						}
+						if (Intersector.overlaps(e.boundary,
+								missileBuilding.boundary)) {
+							missileBuilding.damaged = true;
+						}
+					}
+				}
+			}
+			for (Vector2 v : newExp) {
+				explosions.add(new Explosion(v));
 				explode.play(.2f);
 			}
-		}
-		shapeBatch.end();
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		for (Building b : buildings) {
-			b.render(batch);
-		}
-		for(int i = 0; i<currentAmmo;i++){
-			batch.draw(bullet, 20-640+i*20, 280,10,20);
-		}
-		missileBuilding.render(batch);
-		font.draw(batch, "Wave: "+wave, -((vpWidth/2)-20), (vpHeight/2)-20);
-		batch.end();
-		if(missileBuilding.damaged&&!missileBuilding.visible){
-			game.setScreen(new GameOver(vpWidth, vpHeight,game,camera,score+previousScore));
-			this.dispose();
-		}
+			for (ICBM i : ICBMList) {
+				if (!i.visible) {
+					removeIList.add(i);
+				}
+			}
+			for (ICBM r : removeIList) {
+				ICBMList.remove(r);
+			}
+			if (removeIList.size() > 10) {
+				removeIList = new ArrayList<ICBM>();
+			}
+			missileBuilding.update();
+			for (Building b : buildings) {
+				b.update();
+			}
+			for (Missile r : removeList) {
+				missileList.remove(r);
+			}
+			if (removeList.size() > 10) {
+				removeList = new ArrayList<Missile>();
+			}
+			for (ICBM i : ICBMList) {
+				i.update(explosions);
+				i.render(shapeBatch);
+				for (Building b : buildings) {
+					if (i.visible) {
+						if (b.boundary.contains(i.position)) {
+							b.damaged = true;
+							i.visible = false;
+							explosions.add(new Explosion(i.position));
+							i.speed = new Vector2(0, 0);
+							explode.play(.2f);
+						}
+					}
+				}
+				if (missileBuilding.boundary.contains(i.position)) {
+					missileBuilding.damaged = true;
+					explosions.add(new Explosion(i.position));
+					explode.play(.2f);
+				}
+			}
+			shapeBatch.end();
+			batch.setProjectionMatrix(camera.combined);
+			batch.begin();
+			for (Building b : buildings) {
+				b.render(batch);
+			}
+			for (int i = 0; i < currentAmmo; i++) {
+				batch.draw(bullet, 20 - 640 + i * 20, 280, 10, 20);
+			}
+			missileBuilding.render(batch);
+			font.draw(batch, "Wave: " + wave, -((vpWidth / 2) - 20),
+					(vpHeight / 2) - 20);
+			batch.end();
+			if (missileBuilding.damaged && !missileBuilding.visible) {
+				game.setScreen(new GameOver(vpWidth, vpHeight, game, camera,
+						score + previousScore));
+				this.dispose();
+			}
 		}
 	}
-	
-	
+
 	@Override
 	public void show() {
 		music.setVolume(.2f);
 		music.play();
 	}
-
 
 	@Override
 	public void resize(int width, int height) {
@@ -272,13 +294,13 @@ public class SinglePlayer implements Screen {
 	@Override
 	public void pause() {
 		music.pause();
-		pause=true;
+		pause = true;
 	}
 
 	@Override
 	public void resume() {
 		music.play();
-		pause=false;
+		pause = false;
 	}
 
 	@Override
